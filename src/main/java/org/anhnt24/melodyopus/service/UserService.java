@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import org.anhnt24.melodyopus.dto.UserDTO;
 import org.anhnt24.melodyopus.entity.User;
 import org.anhnt24.melodyopus.repository.UserRepository;
+import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -11,26 +12,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserService implements UserDetailsService {
+public class UserService {
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
+    private AuthService authService;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Override
-    public User loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username);
-        if (user == null) {
-            throw new UsernameNotFoundException("Username not found " + username);
-        } else {
-            return user;
-        }
-    }
-
-    public User loadUserByEmail(String email) {
-        return userRepository.findByEmail(email);
-    }
 
     private Boolean checkIfEmailExists(String email) {
         return userRepository.existsByEmail(email);
@@ -64,15 +55,28 @@ public class UserService implements UserDetailsService {
     public void createDefaultUser() {
         String adminUsername = "_admin_melodyopus_00";
         try {
-            loadUserByUsername(adminUsername);
+            authService.loadUserByUsername(adminUsername);
         } catch (UsernameNotFoundException e) {
             User user = new User.Builder()
                     .email("admin@melodyopus.anh-nt24")
                     .password(passwordEncoder.encode("admin@melodyopus.anh-nt24@lalala"))
-                    .name("")
+                    .name("ADMIN")
                     .isAdmin(true)
                     .username("_admin_melodyopus_00").build();
             userRepository.save(user);
+        }
+    }
+
+    @Transactional
+    public User getUserByUsername(String username) {
+        try {
+            return userRepository.findByUsername(username);
+        } catch (UsernameNotFoundException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
+        } catch (ServiceException e) {
+            e.printStackTrace();
+            throw new ServiceException("Error on get user by username: " + e.getMessage());
         }
     }
 
