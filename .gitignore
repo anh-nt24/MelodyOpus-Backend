@@ -4,6 +4,12 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+uploads/mp3/*
+uploads/image/*
+
+!uploads/mp3/sample.mp3
+!uploads/image/sample.jpg
+
 ### STS ###
 .apt_generated
 .classpath
