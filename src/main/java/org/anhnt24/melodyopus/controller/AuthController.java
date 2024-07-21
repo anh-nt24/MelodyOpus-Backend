@@ -42,7 +42,7 @@ public class AuthController {
             );
             User user = authService.loadUserByUsername(authRequestDTO.getUsername());
             String jwtToken = tokenManager.generateJwtToken(user);
-            AuthResponseDTO authResponseDTO = new AuthResponseDTO(jwtToken, user.getId());
+            AuthResponseDTO authResponseDTO = new AuthResponseDTO(user, jwtToken);
             return ResponseEntity.ok(authResponseDTO);
         } catch (UsernameNotFoundException e) {
             return ResponseEntity.notFound().build();
