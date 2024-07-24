@@ -5,7 +5,9 @@ import org.anhnt24.melodyopus.dto.SongDTO;
 import org.anhnt24.melodyopus.entity.Song;
 import org.anhnt24.melodyopus.entity.User;
 import org.anhnt24.melodyopus.service.AuthService;
+import org.anhnt24.melodyopus.service.LikeService;
 import org.anhnt24.melodyopus.service.SongService;
+import org.anhnt24.melodyopus.service.UserService;
 import org.anhnt24.melodyopus.utils.TokenManager;
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,10 +29,16 @@ public class SongController {
     private SongService songService;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private AuthService authService;
 
     @Autowired
     private TokenManager tokenManager;
+
+    @Autowired
+    private LikeService likeService;
 
 //    @GetMapping("/filter")
 //

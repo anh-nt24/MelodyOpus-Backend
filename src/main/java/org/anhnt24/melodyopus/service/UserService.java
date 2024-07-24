@@ -80,5 +80,18 @@ public class UserService {
         }
     }
 
+    @Transactional
+    public User getUserById(Long userId) {
+        try {
+            return userRepository.findById(userId).orElse(null);
+        } catch (UsernameNotFoundException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
+        } catch (ServiceException e) {
+            e.printStackTrace();
+            throw new ServiceException("Error on get user by username: " + e.getMessage());
+        }
+    }
+
 
 }

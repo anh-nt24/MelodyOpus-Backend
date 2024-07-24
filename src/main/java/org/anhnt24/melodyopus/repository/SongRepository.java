@@ -7,11 +7,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public interface SongRepository extends JpaRepository<Song, Long> {
 
     Optional<Song> findByIdAndStatusTrue(Long songId);
@@ -26,4 +28,5 @@ public interface SongRepository extends JpaRepository<Song, Long> {
             "OR LOWER(s.lyric) LIKE LOWER(CONCAT('%', :query, '%'))")
     List<Song> searchByTitleOrLyric(@Param("query") String query);
 
+    Optional<Song> findByFilePath(String filePath);
 }

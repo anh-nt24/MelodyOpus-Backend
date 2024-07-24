@@ -23,4 +23,25 @@ public class Follow {
     @ManyToOne
     @JoinColumn(name = "followed_id", nullable = false)
     private User followed;
+
+    public static class Builder {
+        private User follower, followed;
+
+        public Builder follower(User follower) {
+            this.follower = follower;
+            return this;
+        }
+
+        public Builder followed(User followed) {
+            this.followed = followed;
+            return this;
+        }
+
+        public Follow build() {
+            Follow follow = new Follow();
+            follow.setFollowed(this.followed);
+            follow.setFollower(this.follower);
+            return follow;
+        }
+    }
 }

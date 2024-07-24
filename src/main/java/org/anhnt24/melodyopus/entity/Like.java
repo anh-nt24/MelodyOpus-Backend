@@ -23,4 +23,26 @@ public class Like {
     @ManyToOne
     @JoinColumn(name = "song_id", nullable = false)
     private Song song;
+
+    public static class Builder {
+        private User user;
+        private Song song;
+
+        public Builder song(Song song) {
+            this.song = song;
+            return this;
+        }
+
+        public Builder user(User user) {
+            this.user = user;
+            return this;
+        }
+
+        public Like build() {
+            Like like = new Like();
+            like.setSong(song);
+            like.setUser(user);
+            return like;
+        }
+    }
 }

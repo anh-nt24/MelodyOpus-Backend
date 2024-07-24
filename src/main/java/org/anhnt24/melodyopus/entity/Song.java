@@ -34,7 +34,7 @@ public class Song {
     @Temporal(TemporalType.DATE) // store date only (ignore time)
     private Date releaseDate;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String filePath;
 
     @Column
