@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.anhnt24.melodyopus.entity.User;
 import org.anhnt24.melodyopus.service.FollowService;
 import org.anhnt24.melodyopus.service.UserService;
-import org.anhnt24.melodyopus.utils.TokenManager;
+import org.anhnt24.melodyopus.utils.UserUtil;
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,16 +20,13 @@ public class FollowController {
     private UserService userService;
 
     @Autowired
-    private TokenManager tokenManager;
+    private UserUtil userUtil;
 
     // Endpoint to follow a user
     @PostMapping("/follow")
     public ResponseEntity<?> followUser(HttpServletRequest request, @RequestParam Long followedId) {
-        String header = request.getHeader("Authorization");
-        String token = header.substring(7);
-        String username = tokenManager.getUsernameFromToken(token);
         try {
-            User follower = userService.getUserByUsername(username);
+            User follower = userUtil.getUserFromRequest(request);
             User followed = userService.getUserById(followedId);
             if (follower == null || followed == null) {
                 return ResponseEntity.badRequest().body("User not found");
@@ -44,11 +41,8 @@ public class FollowController {
     // Endpoint to unfollow a user
     @PostMapping("/unfollow")
     public ResponseEntity<String> unfollowUser(HttpServletRequest request, @RequestParam Long followedId) {
-        String header = request.getHeader("Authorization");
-        String token = header.substring(7);
-        String username = tokenManager.getUsernameFromToken(token);
         try {
-            User follower = userService.getUserByUsername(username);
+            User follower = userUtil.getUserFromRequest(request);
             User followed = userService.getUserById(followedId);
             if (follower == null || followed == null) {
                 return ResponseEntity.badRequest().body("User not found");
@@ -62,14 +56,8 @@ public class FollowController {
 
     @GetMapping("/check")
     public ResponseEntity<?> isFollowing(HttpServletRequest request, @RequestParam Long followedId) {
-        String header = request.getHeader("Authorization");
-        String token = header.substring(7);
-        if (token.isEmpty())
-            return ResponseEntity.badRequest().body("User not found");
-
-        String username = tokenManager.getUsernameFromToken(token);
         try {
-            User follower = userService.getUserByUsername(username);
+            User follower = userUtil.getUserFromRequest(request);
             User followed = userService.getUserById(followedId);
             if (follower == null || followed == null) {
                 return ResponseEntity.badRequest().body("User not found");

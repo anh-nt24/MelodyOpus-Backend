@@ -4,21 +4,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.anhnt24.melodyopus.dto.SongDTO;
 import org.anhnt24.melodyopus.entity.Song;
 import org.anhnt24.melodyopus.entity.User;
-import org.anhnt24.melodyopus.service.AuthService;
 import org.anhnt24.melodyopus.service.LikeService;
 import org.anhnt24.melodyopus.service.SongService;
 import org.anhnt24.melodyopus.service.UserService;
-import org.anhnt24.melodyopus.utils.TokenManager;
+import org.anhnt24.melodyopus.utils.UserUtil;
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -35,16 +28,12 @@ public class LikeController {
     private LikeService likeService;
 
     @Autowired
-    private TokenManager tokenManager;
+    private UserUtil userUtil;
 
     @PostMapping("/like")
     public ResponseEntity<?> likeASong(HttpServletRequest request, @RequestParam Long songId) {
-        String header = request.getHeader("Authorization");
-        String token = header.substring(7);
-        String username = tokenManager.getUsernameFromToken(token);
-
         try {
-            User user = userService.getUserByUsername(username);
+            User user = userUtil.getUserFromRequest(request);
             Song song = songService.getASongById(songId);
             if (user == null || song == null) {
                 return ResponseEntity.notFound().build();
@@ -60,11 +49,8 @@ public class LikeController {
 
     @PostMapping("/unlike")
     public ResponseEntity<?> unlikeASong(HttpServletRequest request, @RequestParam Long songId) {
-        String header = request.getHeader("Authorization");
-        String token = header.substring(7);
-        String username = tokenManager.getUsernameFromToken(token);
         try {
-            User user = userService.getUserByUsername(username);
+            User user = userUtil.getUserFromRequest(request);
             Song song = songService.getASongById(songId);
             if (user == null || song == null) {
                 return ResponseEntity.notFound().build();
@@ -80,11 +66,8 @@ public class LikeController {
 
     @GetMapping("/check")
     public ResponseEntity<Boolean> checkUserLikesSong(HttpServletRequest request, @RequestParam Long songId) {
-        String header = request.getHeader("Authorization");
-        String token = header.substring(7);
-        String username = tokenManager.getUsernameFromToken(token);
         try {
-            User user = userService.getUserByUsername(username);
+            User user = userUtil.getUserFromRequest(request);
             Song song = songService.getASongById(songId);
             if (user == null || song == null) {
                 return ResponseEntity.notFound().build();
@@ -98,13 +81,8 @@ public class LikeController {
 
     @GetMapping("/user/{userId}/songs")
     public ResponseEntity<?> getSongsLikedByUser(HttpServletRequest request, @PathVariable Long userId) {
-        String header = request.getHeader("Authorization");
-        String token = header.substring(7);
-        if (token.isEmpty()) {
-            return ResponseEntity.badRequest().body("Jwt requires");
-        }
         try {
-            User user = userService.getUserById(userId);
+            User user = userUtil.getUserFromRequest(request);
             if (user == null) {
                 return ResponseEntity.badRequest().body("User not found");
             }

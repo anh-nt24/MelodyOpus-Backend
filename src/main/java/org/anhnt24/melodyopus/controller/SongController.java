@@ -9,6 +9,7 @@ import org.anhnt24.melodyopus.service.LikeService;
 import org.anhnt24.melodyopus.service.SongService;
 import org.anhnt24.melodyopus.service.UserService;
 import org.anhnt24.melodyopus.utils.TokenManager;
+import org.anhnt24.melodyopus.utils.UserUtil;
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -35,10 +36,10 @@ public class SongController {
     private AuthService authService;
 
     @Autowired
-    private TokenManager tokenManager;
+    private LikeService likeService;
 
     @Autowired
-    private LikeService likeService;
+    private UserUtil userUtil;
 
 //    @GetMapping("/filter")
 //
@@ -87,11 +88,8 @@ public class SongController {
 
     @DeleteMapping("/{songId}")
     public ResponseEntity<?> deleteSong(HttpServletRequest request, @PathVariable Long songId) {
-        String header = request.getHeader("Authorization");
-        String token = header.substring(7);
-        String username = tokenManager.getUsernameFromToken(token);
-        User user = authService.loadUserByUsername(username);
         try {
+            User user = userUtil.getUserFromRequest(request);
             songService.deleteASong(user, songId);
             return ResponseEntity.ok("The song has been removed");
         } catch (RuntimeException e) {
@@ -110,12 +108,9 @@ public class SongController {
             @RequestPart("lyric") String lyric,
             @RequestPart("mp3File") MultipartFile mp3File,
             @RequestPart("thumbnail") MultipartFile thumbnail) {
-        String header = request.getHeader("Authorization");
-        String token = header.substring(7);
-        String username = tokenManager.getUsernameFromToken(token);
 
         try {
-            User user = authService.loadUserByUsername(username);
+            User user = userUtil.getUserFromRequest(request);
             songService.updateASong(user, songId, title, genre, lyric, mp3File, thumbnail);
             return ResponseEntity.ok("The song has been updated");
         } catch (RuntimeException e) {
@@ -132,12 +127,8 @@ public class SongController {
                                         @RequestPart("lyric") String lyric,
                                         @RequestPart("mp3File") MultipartFile mp3File,
                                         @RequestPart("thumbnail") MultipartFile thumbnail) {
-        // check user info
-        String tokenHeader = request.getHeader("Authorization");
-        String token = tokenHeader.substring(7);
-        String username = tokenManager.getUsernameFromToken(token);
         try {
-            User user = authService.loadUserByUsername(username);
+            User user = userUtil.getUserFromRequest(request);
             songService.addNewSong(user, title, genre, lyric, mp3File, thumbnail);
             return ResponseEntity.ok("New song has been added");
         } catch (ServiceException e) {
