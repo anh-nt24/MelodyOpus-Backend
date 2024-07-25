@@ -27,7 +27,6 @@ public class LikeController {
     @Autowired
     private LikeService likeService;
 
-    @Autowired
     private UserUtil userUtil;
 
     @PostMapping("/like")

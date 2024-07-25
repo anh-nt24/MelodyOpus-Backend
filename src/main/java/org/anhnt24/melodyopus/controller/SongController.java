@@ -38,7 +38,6 @@ public class SongController {
     @Autowired
     private LikeService likeService;
 
-    @Autowired
     private UserUtil userUtil;
 
 //    @GetMapping("/filter")

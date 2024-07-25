@@ -29,7 +29,6 @@ public class PlaylistController {
     @Autowired
     private UserService userService;
 
-    @Autowired
     private UserUtil userUtil;
 
     // get all songs in a public playlist by playlist id
