@@ -35,7 +35,7 @@ public class User implements UserDetails {
     @Column(length = 256, nullable = false)
     private String password;
 
-    @Column
+    @Column(length = 256)
     private String avatar;
 
     @Column(columnDefinition = "BOOLEAN DEFAULT FALSE")

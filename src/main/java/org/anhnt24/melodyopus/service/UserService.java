@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserService {
@@ -93,5 +94,24 @@ public class UserService {
             e.printStackTrace();
             throw new ServiceException("Error on get user by username: " + e.getMessage());
         }
+    }
+
+    public User findOrCreateUser(String email, String name, String avatar) {
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            String username = email.split("@")[0] + UUID.randomUUID();
+            username = username.substring(0, 20);
+            User userCreation = new User.Builder()
+                    .email(email)
+                    .name(name)
+                    .password(passwordEncoder.encode(""))
+                    .username(username)
+                    .avatar(avatar)
+                    .build();
+
+            User userResult = userRepository.save(userCreation);
+            return userResult;
+        }
+        return user;
     }
 }
