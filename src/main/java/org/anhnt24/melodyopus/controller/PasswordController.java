@@ -34,7 +34,9 @@ public class PasswordController {
             String htmlResponse = "<html><body><script>window.close();</script></body></html>";
             return ResponseEntity.ok().contentType(MediaType.TEXT_HTML).body(htmlResponse);
         } catch (ServiceException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            String errorMessage = e.getMessage();
+            String htmlResponse = "<html><body><p>" + errorMessage + "</p><script>setTimeout(function(){ window.close(); }, 3000);</script></body></html>";
+            return ResponseEntity.badRequest().contentType(MediaType.TEXT_HTML).body(htmlResponse);
         }
     }
 }
