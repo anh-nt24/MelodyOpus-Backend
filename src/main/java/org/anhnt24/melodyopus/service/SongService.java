@@ -88,7 +88,6 @@ public class SongService {
 
             songRepository.save(song);
         } catch (IOException | UnsupportedTagException | InvalidDataException e) {
-            e.printStackTrace();
             throw new ServiceException("Failed to save files", e);
         }
     }

@@ -1,16 +1,28 @@
 package org.anhnt24.melodyopus.service;
 
 import jakarta.transaction.Transactional;
+import org.anhnt24.melodyopus.dto.PasswordUpdateDTO;
 import org.anhnt24.melodyopus.dto.UserDTO;
+import org.anhnt24.melodyopus.entity.PasswordResetToken;
+import org.anhnt24.melodyopus.entity.Song;
 import org.anhnt24.melodyopus.entity.User;
+import org.anhnt24.melodyopus.repository.PasswordResetTokenRepository;
 import org.anhnt24.melodyopus.repository.UserRepository;
+import org.anhnt24.melodyopus.utils.FileUtil;
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.data.domain.Page;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -25,6 +37,18 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private FileUtil fileUtil;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private PasswordResetTokenRepository passwordResetTokenRepository;
+
+    @Autowired
+    private EmailService emailService;
+
 
     private Boolean checkIfEmailExists(String email) {
         return userRepository.existsByEmail(email);
@@ -36,7 +60,7 @@ public class UserService {
 
     @Transactional
     public void registerUser(UserDTO userDTO) {
-        // Check if email already exists
+        // check if email already exists
         if (checkIfEmailExists(userDTO.getEmail())) {
             throw new RuntimeException("Email already exists");
         }
@@ -89,7 +113,7 @@ public class UserService {
             return userRepository.findById(userId).orElse(null);
         } catch (UsernameNotFoundException e) {
             e.printStackTrace();
-            throw new RuntimeException(e.getMessage());
+            throw new UsernameNotFoundException(e.getMessage());
         } catch (ServiceException e) {
             e.printStackTrace();
             throw new ServiceException("Error on get user by username: " + e.getMessage());
@@ -113,5 +137,86 @@ public class UserService {
             return userResult;
         }
         return user;
+    }
+
+    public List<UserDTO> getAllUsers() {
+        try {
+            List<User> users = userRepository.findAllByEnabledTrue();
+            return users
+                    .stream()
+                    .map((user -> mapToDTO(user)))
+                    .toList();
+        } catch (Exception e) {
+            throw new ServiceException(e.getMessage());
+        }
+    }
+
+    public UserDTO mapToDTO(User user) {
+        return new UserDTO(
+                user.getName(),
+                user.getEmail(),
+                user.getPassword(),
+                user.getUsername(),
+                user.getAvatar()
+        );
+    }
+
+    public void updateUserAvatar(User user, MultipartFile file) {
+        try {
+            fileUtil.validateFile(file, "image");
+            String avatarUrl = fileUtil.saveImageFile(file);
+
+            user.setAvatar(avatarUrl);
+            userRepository.save(user);
+        }
+        catch (IOException e) {
+            throw new ServiceException("Failed to save file ", e);
+        }
+    }
+
+    public void removeUser(User user) {
+        user.setEnabled(false);
+        userRepository.save(user);
+    }
+
+    public void updatePassword(User user, PasswordUpdateDTO passwordUpdateDTO) {
+        String oldPassword = passwordUpdateDTO.getOldPassword();
+        String newPassword = passwordUpdateDTO.getNewPassword();
+
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            user.getUsername(), oldPassword
+                    )
+            );
+
+            user.setPassword(passwordEncoder.encode(newPassword));
+        } catch (UsernameNotFoundException e) {
+            throw new UsernameNotFoundException(e.getMessage());
+        } catch (DisabledException e) {
+            throw new DisabledException(e.getMessage());
+        } catch (BadCredentialsException e) {
+            throw new BadCredentialsException(e.getMessage());
+        } catch (Exception e) {
+            throw new ServiceException(e.getMessage());
+        }
+
+
+    }
+
+    public void updateUserInfo(User user, UserDTO userDTO) {
+        try {
+            if (checkIfUsernameExists(user.getUsername())) {
+                throw new ServiceException("Username already exists.");
+            }
+
+            user.setName(userDTO.getName());
+            user.setUsername(userDTO.getUsername());
+            user.setEmail(userDTO.getEmail());
+
+            userRepository.save(user);
+        } catch (Exception e) {
+            throw new ServiceException(e.getMessage());
+        }
     }
 }

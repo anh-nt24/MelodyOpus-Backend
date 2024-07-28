@@ -63,7 +63,7 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable);
         http.cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource()));
         http.authorizeHttpRequests((requests) -> requests
-            .requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
+            .requestMatchers(HttpMethod.POST, "/api/auth/**", "/api/password/**").permitAll()
             .requestMatchers(HttpMethod.GET, "/api/**", "/uploads/**", "/swagger-ui").permitAll()
             .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
             .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
