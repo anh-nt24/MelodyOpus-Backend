@@ -27,6 +27,7 @@ public class UserController {
     @Autowired
     private TokenManager tokenManager;
 
+    @Autowired
     private UserUtil userUtil;
 
     // get all users

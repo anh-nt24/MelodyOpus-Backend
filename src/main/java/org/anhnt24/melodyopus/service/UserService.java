@@ -3,15 +3,12 @@ package org.anhnt24.melodyopus.service;
 import jakarta.transaction.Transactional;
 import org.anhnt24.melodyopus.dto.PasswordUpdateDTO;
 import org.anhnt24.melodyopus.dto.UserDTO;
-import org.anhnt24.melodyopus.entity.PasswordResetToken;
-import org.anhnt24.melodyopus.entity.Song;
 import org.anhnt24.melodyopus.entity.User;
 import org.anhnt24.melodyopus.repository.PasswordResetTokenRepository;
 import org.anhnt24.melodyopus.repository.UserRepository;
 import org.anhnt24.melodyopus.utils.FileUtil;
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -22,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -163,7 +161,7 @@ public class UserService {
 
     public void updateUserAvatar(User user, MultipartFile file) {
         try {
-            fileUtil.validateFile(file, "image");
+            fileUtil.validateFile(file, Arrays.asList("image"));
             String avatarUrl = fileUtil.saveImageFile(file);
 
             user.setAvatar(avatarUrl);
@@ -191,6 +189,7 @@ public class UserService {
             );
 
             user.setPassword(passwordEncoder.encode(newPassword));
+            userRepository.save(user);
         } catch (UsernameNotFoundException e) {
             throw new UsernameNotFoundException(e.getMessage());
         } catch (DisabledException e) {

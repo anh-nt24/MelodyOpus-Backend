@@ -12,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.UUID;
 
 @Component
@@ -56,11 +57,11 @@ public class FileUtil {
         return new FileSystemResource(filePath);
     }
 
-    public void validateFile(MultipartFile file, String expectedType) throws RuntimeException {
+    public void validateFile(MultipartFile file, List<String> expectedTypes) throws RuntimeException {
         if (file.isEmpty()) {
             throw new RuntimeException("File is empty");
         }
-        if (!file.getContentType().contains(expectedType)) {
+        if (!expectedTypes.contains(file.getContentType())) {
             throw new RuntimeException("Invalid file type");
         }
     }

@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,6 +32,15 @@ public class SongService {
     public Page<SongDTO> getAllSongs(PageRequest req) throws ServiceException {
         try {
             Page<Song> songs = songRepository.findAllByStatusTrue(req);
+            return songs.map((song -> mapToDTO(song)));
+        } catch (Exception e) {
+            throw new ServiceException(e.getMessage());
+        }
+    }
+
+    public Page<SongDTO> getSongsByUser(User user, PageRequest req) throws ServiceException {
+        try {
+            Page<Song> songs = songRepository.findByUserAndStatusTrue(user, req);
             return songs.map((song -> mapToDTO(song)));
         } catch (Exception e) {
             throw new ServiceException(e.getMessage());
@@ -68,8 +78,8 @@ public class SongService {
                            String lyric,
                            MultipartFile mp3File,
                            MultipartFile thumbnail) throws ServiceException {
-        fileUtil.validateFile(mp3File, "audio/mpeg");
-        fileUtil.validateFile(thumbnail, "image");
+        fileUtil.validateFile(mp3File, Arrays.asList("audio/mpeg", "audio/mp3", "application/octet-stream"));
+        fileUtil.validateFile(thumbnail, Arrays.asList("image", "application/octet-stream"));
 
         try {
             String mp3FilePath = fileUtil.saveMp3File(mp3File);
@@ -116,8 +126,8 @@ public class SongService {
             throw new RuntimeException("This song doesn't belong to user");
         }
 
-        fileUtil.validateFile(mp3File, "audio/mpeg");
-        fileUtil.validateFile(thumbnail, "image");
+        fileUtil.validateFile(mp3File, Arrays.asList("audio/mpeg", "audio/mp3", "application/octet-stream"));
+        fileUtil.validateFile(thumbnail, Arrays.asList("image", "application/octet-stream"));
 
         try {
             String mp3FilePath = fileUtil.saveMp3File(mp3File);

@@ -13,9 +13,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.File;
-import java.net.URLEncoder;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -32,7 +29,7 @@ public class FileRequestController {
     @GetMapping("/mp3/{filename:.+}")
     public ResponseEntity<?> getMp3(@PathVariable String filename) {
         try {
-            songService.updateListened(filename);
+//            songService.updateListened(filename);
             return handleFetchFile(filename, "mp3");
         } catch (ServiceException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

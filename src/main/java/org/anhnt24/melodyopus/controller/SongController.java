@@ -38,6 +38,7 @@ public class SongController {
     @Autowired
     private LikeService likeService;
 
+    @Autowired
     private UserUtil userUtil;
 
 //    @GetMapping("/filter")
@@ -67,6 +68,21 @@ public class SongController {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Something went wrong when fetching songs: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/user")
+    public ResponseEntity<?> getAllSongsOfUser(HttpServletRequest request, @RequestParam(defaultValue = "0") int page,
+                                         @RequestParam(defaultValue = "20") int size) {
+        try {
+            User user = userUtil.getUserFromRequest(request);
+            PageRequest req = PageRequest.of(page, size, Sort.by("releaseDate").descending());
+            Page<SongDTO> songs = songService.getSongsByUser(user, req);
+            return ResponseEntity.ok(songs);
+        } catch (ServiceException e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(e.getMessage());
         }
     }
 

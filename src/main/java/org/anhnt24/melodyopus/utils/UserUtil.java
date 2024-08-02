@@ -5,7 +5,9 @@ import org.anhnt24.melodyopus.entity.User;
 import org.anhnt24.melodyopus.service.UserService;
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class UserUtil {
 
     @Autowired

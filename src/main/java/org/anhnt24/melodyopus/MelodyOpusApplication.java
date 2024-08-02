@@ -1,15 +1,10 @@
 package org.anhnt24.melodyopus;
 
-import org.anhnt24.melodyopus.entity.User;
-import org.anhnt24.melodyopus.repository.UserRepository;
-import org.anhnt24.melodyopus.service.AuthService;
 import org.anhnt24.melodyopus.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;

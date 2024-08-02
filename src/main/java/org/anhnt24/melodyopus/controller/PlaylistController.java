@@ -29,6 +29,7 @@ public class PlaylistController {
     @Autowired
     private UserService userService;
 
+    @Autowired
     private UserUtil userUtil;
 
     // get all songs in a public playlist by playlist id
@@ -71,7 +72,7 @@ public class PlaylistController {
     }
 
     // add new song in playlist (requires JWT)
-    @PostMapping("/{playlistId}/")
+    @PostMapping("/{playlistId}/songs")
     public ResponseEntity<String> addNewSongToPlaylist(HttpServletRequest request, @PathVariable Long playlistId, @RequestParam Long songId) {
         try {
             User user = userUtil.getUserFromRequest(request);
@@ -83,7 +84,7 @@ public class PlaylistController {
     }
 
     // remove song from playlist (requires JWT)
-    @DeleteMapping("/{playlistId}/")
+    @DeleteMapping("/{playlistId}/songs/")
     public ResponseEntity<String> removeSongFromPlaylist(HttpServletRequest request, @PathVariable Long playlistId, @RequestParam Long songId) {
         try {
             User user = userUtil.getUserFromRequest(request);

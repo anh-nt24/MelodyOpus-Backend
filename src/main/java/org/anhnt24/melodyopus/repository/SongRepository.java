@@ -2,6 +2,7 @@ package org.anhnt24.melodyopus.repository;
 
 import org.anhnt24.melodyopus.dto.SongDTO;
 import org.anhnt24.melodyopus.entity.Song;
+import org.anhnt24.melodyopus.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,6 +20,8 @@ public interface SongRepository extends JpaRepository<Song, Long> {
     Optional<Song> findByIdAndStatusTrue(Long songId);
 
     Page<Song> findAllByStatusTrue(Pageable pageable);
+
+    Page<Song> findByUserAndStatusTrue(User user, Pageable pageable);
 
     // select * from Song where
     // lower(title) like lower(concat('%', ?, '%'))

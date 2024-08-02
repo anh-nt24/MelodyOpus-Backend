@@ -19,6 +19,7 @@ public class FollowController {
     @Autowired
     private UserService userService;
 
+    @Autowired
     private UserUtil userUtil;
 
     // Endpoint to follow a user
