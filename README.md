@@ -47,7 +47,7 @@ Mobile: [check here](https://github.com/anh-nt24/MelodyOpus-Mobile)
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-username/MelodyOpus-Backend.git
+   git clone https://github.com/anh-nt24/MelodyOpus-Backend.git
    cd MelodyOpus-Backend
    ```
 
