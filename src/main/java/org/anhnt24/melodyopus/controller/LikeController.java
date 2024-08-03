@@ -79,8 +79,8 @@ public class LikeController {
         }
     }
 
-    @GetMapping("/user/{userId}/songs")
-    public ResponseEntity<?> getSongsLikedByUser(HttpServletRequest request, @PathVariable Long userId) {
+    @GetMapping("/user")
+    public ResponseEntity<?> getSongsLikedByUser(HttpServletRequest request) {
         try {
             User user = userUtil.getUserFromRequest(request);
             if (user == null) {
@@ -89,12 +89,15 @@ public class LikeController {
             List<SongDTO> songs = likeService.getSongsLikedByUser(user);
             return ResponseEntity.ok(songs);
         } catch (ServiceException e) {
+            System.out.println(e);
             return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
 
-    @GetMapping("/song/{songId}/likes")
-    public ResponseEntity<?> getLikeCountForSong(@PathVariable Long songId) {
+    @GetMapping("/song")
+    public ResponseEntity<?> getLikeCountForSong(@RequestParam Long songId) {
         try {
             Song song = songService.getASongById(songId);
             if (song == null) {

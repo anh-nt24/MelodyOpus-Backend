@@ -172,10 +172,8 @@ public class SongService {
 
     public void updateListened(Long songId) {
         Song song = songRepository.findById(songId).orElse(null);
-        System.out.println("Song listened before updating: " + song.getListened());
         if (song != null) {
             song.setListened(song.getListened() + 1);
-            System.out.println("Song listened after updating: " + song.getListened());
             songRepository.save(song);
         } else {
             throw new ServiceException("Song not found");
