@@ -2,13 +2,11 @@ package org.anhnt24.melodyopus.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.anhnt24.melodyopus.dto.SongDTO;
-import org.anhnt24.melodyopus.entity.Song;
 import org.anhnt24.melodyopus.entity.User;
 import org.anhnt24.melodyopus.service.AuthService;
 import org.anhnt24.melodyopus.service.LikeService;
 import org.anhnt24.melodyopus.service.SongService;
 import org.anhnt24.melodyopus.service.UserService;
-import org.anhnt24.melodyopus.utils.TokenManager;
 import org.anhnt24.melodyopus.utils.UserUtil;
 import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,6 +89,21 @@ public class SongController {
         try {
             SongDTO song = songService.mapToDTO(songService.getASongById(songId));
             return ResponseEntity.ok(song);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+        catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Something went wrong when fetching songs: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/listen")
+    public ResponseEntity<?> updateListen(@RequestParam Long songId) {
+        try {
+            songService.updateListened(songId);
+            return ResponseEntity.ok("Song's listen updated");
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }

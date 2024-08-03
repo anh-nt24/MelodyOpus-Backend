@@ -68,10 +68,6 @@ public class SongService {
         return mp3.getLengthInSeconds();
     }
 
-    public Song getSongByMp3File(String filename) {
-        return songRepository.findByFilePath(filename).orElse(null);
-    }
-
     public void addNewSong(User user,
                            String title,
                            String genre,
@@ -174,10 +170,12 @@ public class SongService {
         }
     }
 
-    public void updateListened(String filename) {
-        Song song = this.getSongByMp3File(filename);
+    public void updateListened(Long songId) {
+        Song song = songRepository.findById(songId).orElse(null);
+        System.out.println("Song listened before updating: " + song.getListened());
         if (song != null) {
             song.setListened(song.getListened() + 1);
+            System.out.println("Song listened after updating: " + song.getListened());
             songRepository.save(song);
         } else {
             throw new ServiceException("Song not found");

@@ -1,8 +1,6 @@
 package org.anhnt24.melodyopus.controller;
 
-import org.anhnt24.melodyopus.service.SongService;
 import org.hibernate.service.spi.ServiceException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -22,14 +20,9 @@ public class FileRequestController {
     @Value("${upload.directory}")
     private String uploadDir;
 
-    @Autowired
-    private SongService songService;
-
-
     @GetMapping("/mp3/{filename:.+}")
     public ResponseEntity<?> getMp3(@PathVariable String filename) {
         try {
-//            songService.updateListened(filename);
             return handleFetchFile(filename, "mp3");
         } catch (ServiceException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

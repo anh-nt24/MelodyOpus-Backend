@@ -65,6 +65,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests((requests) -> requests
             .requestMatchers(HttpMethod.POST, "/api/auth/**", "/api/password/**").permitAll()
             .requestMatchers(HttpMethod.GET, "/api/**", "/uploads/**", "/swagger-ui").permitAll()
+            .requestMatchers(HttpMethod.PUT, "/api/song/listen").permitAll()
             .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
             .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
             .anyRequest().authenticated());
