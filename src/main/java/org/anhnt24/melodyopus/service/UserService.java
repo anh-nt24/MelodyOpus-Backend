@@ -161,7 +161,7 @@ public class UserService {
 
     public void updateUserAvatar(User user, MultipartFile file) {
         try {
-            fileUtil.validateFile(file, Arrays.asList("image"));
+            fileUtil.validateFile(file, Arrays.asList("image",  "image/jpeg", "image/png", "image/webp", "application/octet-stream"));
             String avatarUrl = fileUtil.saveImageFile(file);
 
             user.setAvatar(avatarUrl);

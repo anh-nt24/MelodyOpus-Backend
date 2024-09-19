@@ -75,7 +75,7 @@ public class SongService {
                            MultipartFile mp3File,
                            MultipartFile thumbnail) throws ServiceException {
         fileUtil.validateFile(mp3File, Arrays.asList("audio/mpeg", "audio/mp3", "application/octet-stream"));
-        fileUtil.validateFile(thumbnail, Arrays.asList("image", "application/octet-stream"));
+        fileUtil.validateFile(thumbnail, Arrays.asList("image", "image/jpeg", "image/png", "image/webp", "application/octet-stream"));
 
         try {
             String mp3FilePath = fileUtil.saveMp3File(mp3File);
@@ -123,7 +123,7 @@ public class SongService {
         }
 
         fileUtil.validateFile(mp3File, Arrays.asList("audio/mpeg", "audio/mp3", "application/octet-stream"));
-        fileUtil.validateFile(thumbnail, Arrays.asList("image", "application/octet-stream"));
+        fileUtil.validateFile(thumbnail, Arrays.asList("image", "image/jpeg", "image/png", "image/webp", "application/octet-stream"));
 
         try {
             String mp3FilePath = fileUtil.saveMp3File(mp3File);

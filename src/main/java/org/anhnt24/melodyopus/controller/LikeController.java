@@ -89,7 +89,6 @@ public class LikeController {
             List<SongDTO> songs = likeService.getSongsLikedByUser(user);
             return ResponseEntity.ok(songs);
         } catch (ServiceException e) {
-            System.out.println(e);
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(e.getMessage());
